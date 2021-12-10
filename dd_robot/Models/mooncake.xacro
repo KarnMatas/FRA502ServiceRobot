@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<robot name="turtle1" xmlns:xacro="http://ros.org/wiki/xacro">
+<xacro:property name="base_length" value="1" />
+<xacro:property name="base_radius" value="0.25" />
+<xacro:property name="base_mass" value="5" />
+
+<xacro:property name="lwheel_length" value="0.1" />
+<xacro:property name="lwheel_radius" value="0.1" />
+<xacro:property name="lwheel_mass" value="2" />
+
+<xacro:property name="rwheel_length" value="0.1" />
+<xacro:property name="rwheel_radius" value="0.1" />
+<xacro:property name="rwheel_mass" value="2" />
+
+<xacro:property name="sphere_radius" value="0.1" />
+<xacro:property name="sphere_mass" value="2" />
+
+<link name="base_link">
+	<collision>
+      		<origin xyz="0 0 0.5" rpy="0 0 0" />
+      		<geometry>
+        		<cylinder length="${base_length}" radius="${base_radius}"/>
+      		</geometry>
+      	</collision>
+        <visual>
+          <origin xyz="0 0 0.5" rpy="0 0 0" />
+          <geometry>
+            	<cylinder length="${base_length}" radius="${base_radius}"/>
+          </geometry>
+          <material name="blue"/>
+        </visual>
+        <inertial>
+           	<mass value="${base_mass}" />
+            	<origin xyz="0 0 0.5" rpy="0 0 0" />
+            	<inertia ixx="${base_mass*(3*base_radius*base_radius + base_length*base_length)/12}" ixy="0" ixz="0" 
+            	iyy="${base_mass*(3*base_radius*base_radius + base_length*base_length)/12}" iyz="0" 
+            	izz="${base_mass*base_radius*base_radius/2}" />
+       </inertial>
+      </link>
+      
+      <link name="left_Wheel">
+	<collision>
+      		<geometry>
+        		<cylinder length="${lwheel_length}" radius="${lwheel_radius}"/>
+      		</geometry>
+      	</collision>
+        <visual>
+          	<geometry>
+            		<cylinder length="${lwheel_length}" radius="${lwheel_radius}"/>
+            		<material name="white"/>
+          	</geometry>
+        </visual>
+        <inertial>
+            	<mass value="${lwheel_mass}" />
+            	<inertia ixx="${lwheel_mass*(3*lwheel_radius*base_radius + lwheel_length*lwheel_length)/12}" ixy="0" ixz="0" 
+            	iyy="${lwheel_mass*(3*lwheel_radius*lwheel_radius + lwheel_length*lwheel_length)/12}" iyz="0" 
+            	izz="${lwheel_mass*lwheel_radius*lwheel_radius/2}" />
+       </inertial>
+      </link>
+      
+      <link name="right_Wheel">
+	<collision>
+      		<geometry>
+        		<cylinder length="${rwheel_length}" radius="${rwheel_radius}"/>
+      		</geometry>
+      	</collision>
+        <visual>
+          	<geometry>
+            		<cylinder length="${rwheel_length}" radius="${rwheel_radius}"/>
+            		<material name="white"/>
+          	</geometry>
+        </visual>
+        <inertial>
+            	<mass value="${rwheel_mass}" />
+            	<inertia ixx="${rwheel_mass*(3*rwheel_radius*base_radius + rwheel_length*rwheel_length)/12}" ixy="0" ixz="0" 
+            	iyy="${rwheel_mass*(3*rwheel_radius*rwheel_radius + rwheel_length*rwheel_length)/12}" iyz="0" 
+            	izz="${rwheel_mass*rwheel_radius*rwheel_radius/2}" />
+       </inertial>
+      </link>
+      
+      <link name="sphere_Wheel">
+	<collision>
+      		<geometry>
+        		<sphere radius="${sphere_radius}"/>
+      		</geometry>
+   
+      	</collision>
+        <visual>
+          	<geometry>
+            		<sphere radius="${sphere_radius}"/>
+            		<material name="blue"/>
+          	</geometry>
+        </visual>
+        <inertial>
+            	<mass value="${sphere_mass}" />
+            	<inertia ixx="${2*sphere_mass*sphere_radius*sphere_radius/5}" ixy="0" ixz="0" 
+            	iyy="${2*sphere_mass*sphere_radius*sphere_radius/5}" iyz="0" 
+            	izz="${2*sphere_mass*sphere_radius*sphere_radius/5}" />
+       </inertial>
+      </link>
+      
+      <link name='imu_link'>
+      <collision>
+      		<geometry>
+        		<box size="0.1 0.1 0.1"/>
+      		</geometry>
+      	</collision>
+      	<inertial>
+      		<mass value="0.2"/>
+      		<origin xyz="0 0 0.2" rpy=" 0 0 0"/>
+	      	<inertia ixx="0.004" ixy="0.0" ixz="0" iyy="0.006" iyz="0" izz="0.007" />
+     	</inertial>
+    	<visual >
+      		<origin xyz="0 0 0.2" rpy=" 0 0 0"/>
+      		<geometry>
+        		<box size="0.1 0.1 0.1"/>
+      		</geometry>
+    	</visual>
+      </link>
+
+      
+      <joint name ="left_wheel_joint" type="continuous">
+      		<origin xyz="0.1 0.2 0" rpy="-1.57 0 0"/>
+      		<parent link="base_link"/>
+        	<child link="left_Wheel"/>
+        	<axis  xyz="0 0 1" />
+      </joint>
+      
+      <joint name ="right_wheel_joint" type="continuous">
+      		<origin xyz="0.1 -0.2 0" rpy="-1.57 0 0"/>
+      		<parent link="base_link"/>
+        	<child link="right_Wheel"/>
+        	<axis  xyz="0 0 1" />
+      </joint>
+      
+      <joint name ="sphere_wheel_joint" type="fixed">
+      		<origin xyz="-0.2 0 0" rpy="0 0 0"/>
+      		<parent link="base_link"/>
+        	<child link="sphere_Wheel"/>
+        	
+      </joint>
+       <joint name="imu_joint" type="fixed">
+          <origin xyz="0 0 0" rpy="0 0 0"/>
+	  <parent link="base_link"/>
+	  <child link="imu_link"/>
+	</joint>
+	
+	<gazebo reference="imu_link">
+	   <gravity>true</gravity>
+	   <sensor name="imu_sensor" type="imu">
+	       <always_on>true</always_on>
+	       <update_rate>10</update_rate>
+	       <visualize>true</visualize>
+	       <topic>__default_topic__</topic>
+	    <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+	    	<ros>
+        		<namespace>/demo</namespace>
+        		<remapping>~/out:=imu</remapping>
+      		</ros>
+		<topicName>imu</topicName>
+		<bodyName>imu_link</bodyName>
+		<updateRateHZ>10.0</updateRateHZ>
+		<gaussianNoise>0.0</gaussianNoise>
+		<xyzOffset>0 0 0</xyzOffset>
+		<rpyOffset>0 0 0</rpyOffset>
+		<frameName>imu_link</frameName>
+		<initialOrientationAsReference>false</initialOrientationAsReference>
+	     </plugin>
+	        <pose>0 0 0 0 0 0</pose>
+	    </sensor>
+  	</gazebo>
+  	
+  	<gazebo reference="sphere_Wheel">
+	    <material>Gazebo/Blue</material>
+	    	<mu1 value="0.0"/>
+    		<mu2 value="0.0"/>
+	</gazebo>
+  	
+  	<gazebo>
+	  <plugin name='diff_drive' filename='libgazebo_ros_diff_drive.so'>
+	    <ros>
+	      <namespace>/turtle1</namespace>
+	    </ros>
+	   <updateRate>100</updateRate>
+	    <!-- wheels -->
+	    <left_joint>left_wheel_joint</left_joint>
+	    <right_joint>right_wheel_joint</right_joint>
+
+	    <!-- kinematics -->
+	    <wheel_separation>0.4</wheel_separation>
+	    <wheel_diameter>0.1</wheel_diameter>
+
+	    <!-- limits -->
+	    <max_wheel_torque>0.5</max_wheel_torque>
+	    <max_wheel_acceleration>0.3</max_wheel_acceleration>
+	    <commandTopic>turtle1/cmd_vel</commandTopic>
+	    <!-- output -->
+	    <publish_odom>true</publish_odom>
+	    <publish_odom_tf>true</publish_odom_tf>
+	    <publish_wheel_tf>true</publish_wheel_tf>
+
+	    <odometry_frame>odom</odometry_frame>
+	    <robot_base_frame>base_link</robot_base_frame>
+	  </plugin>
+	</gazebo>
+</robot>
